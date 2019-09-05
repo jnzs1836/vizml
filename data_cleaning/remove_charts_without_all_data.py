@@ -21,7 +21,7 @@ errors = 0
 empty_fields = 0
 
 headers = ['fid', 'chart_data', 'layout', 'table_data']
-data_file_name = '../data/plot_data.tsv'
+data_file_name = '../data/plotly_plots_with_full_data_with_all_fields_and_header.tsv'
 chunks = pd.read_csv(
     data_file_name,
     sep='\t',
@@ -59,6 +59,8 @@ for chunk_num, chunk in enumerate(chunks):
 
     chunk.fillna('{}', inplace=True)
     for i, x in chunk.iterrows():
+        if i == 30001:
+            break
         total_num + 1
         try:
             chart_data = literal_eval(x.chart_data)
