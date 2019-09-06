@@ -90,7 +90,8 @@ def get_plotly_dfs(limit=None, exact_num_fields=None, min_fields=None, max_field
                     'locator': locator,
                     'chart_data': chart_obj.chart_data,
                     'table_data': chart_obj.table_data,
-                    'uid_map': uid_map
+                    'uid_map': uid_map,
+                    'layout': chart_obj.layout
                 }
                 yield result
 
