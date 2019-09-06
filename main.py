@@ -315,8 +315,9 @@ line_count = 0
 count = 0
 types = []
 client = MongoClient()
-collection = client['vis_data'].data
-plots = client['vis_data'].plots
+db = client['vizml']
+collection = db.data
+plots = db.plots
 # for i, table in enumerate(tables):
 #     print(i)
 vis_types = set()
