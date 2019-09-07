@@ -109,10 +109,10 @@ def remove_charts_without_all_data(data_file_name = '../data/plot_data.tsv', out
 
 
 if __name__ == '__main__':
-    base_dir = '/media/vidi/Elements/Code/research/vis-data/download/viznet/raw/splits/'
+    base_dir = '/media/vidi/Data/raw/splits/splits/'
     files = [f for f in os.listdir(base_dir) if f.endswith('.tsv') ]
     print(files)
-    mid_path = '/home/vidi/Work/text-vis/vizml/processed/removed_without_data'
+    mid_path = '/media/vidi/Data/raw/splits/mid/'
     for file in files:
         print("process ", file)
         remove_charts_without_all_data(os.path.join(base_dir, file), mid_path)
