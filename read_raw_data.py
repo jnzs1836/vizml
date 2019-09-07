@@ -24,9 +24,9 @@ from feature_extraction.general_helpers import clean_chunk
 from feature_extraction.type_detection import detect_field_type, data_type_to_general_type, data_types, general_types
 
 raw_data_dir = '/media/vidi/Elements/Code/research/vis-data/download/viznet/raw/'
-raw_data_dir = '/media/vidi/Data/raw/'
+raw_data_dir = '/media/vidi/Data/raw/splits/'
 data_dirs = {
-    'plotly': join(raw_data_dir, 'plotly'),
+    'plotly': join(raw_data_dir, 'p1'),
     'manyeyes': join(raw_data_dir, 'manyeyes'),
     'webtables': join(raw_data_dir, 'webtables'),
     'opendata': join(raw_data_dir, 'opendata')

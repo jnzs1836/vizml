@@ -310,19 +310,19 @@ def process_chart(table):
 
 
 
-tables = get_plotly_dfs(limit=1)
+tables = get_plotly_dfs()
 line_count = 0
 count = 0
 types = []
 client = MongoClient()
-db = client['vizml']
+db = client['viznet']
 collection = db.data
 plots = db.plots
 # for i, table in enumerate(tables):
 #     print(i)
 vis_types = set()
-start = 11000
-limit = 4000
+start = 0
+limit = 5000
 for table in tables:
     try:
         if count < start:
