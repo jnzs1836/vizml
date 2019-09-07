@@ -321,8 +321,8 @@ plots = db.plots
 # for i, table in enumerate(tables):
 #     print(i)
 vis_types = set()
-start = 0
-limit = 5000
+start = 5000
+limit = 100000
 for table in tables:
     try:
         if count < start:
