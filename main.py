@@ -321,8 +321,16 @@ plots = db.plots
 # for i, table in enumerate(tables):
 #     print(i)
 vis_types = set()
+start = 11000
+limit = 4000
 for table in tables:
     try:
+        if count < start:
+            count += 1
+            continue
+        if count > start + limit:
+            print("done: ", count)
+            break
         plot, documents, table_types = process_chart(table)
         # collection.insert_many(tables)
         if not table_types:
