@@ -9,6 +9,7 @@ is a generator that yields a single dataset and metadata in the form:
 }
 '''
 import os
+from pymongo import MongoClient
 from os import listdir
 from os.path import join
 from collections import OrderedDict
@@ -37,6 +38,9 @@ data_dirs = {
 
 
 CHUNK_SIZE = 5000
+client = MongoClient()
+db = client['viznet_data']
+collection = db.files
 
 def get_plotly_dfs(limit=None, exact_num_fields=None, min_fields=None, max_fields=None):
     corpus = 'plotly'
@@ -46,6 +50,7 @@ def get_plotly_dfs(limit=None, exact_num_fields=None, min_fields=None, max_field
     # files = [tsv_file]
     for f in files[:limit]:
         print(f)
+
         raw_df_chunks = pd.read_csv(
             join(data_dirs[corpus], f),
             sep='\t',
@@ -55,46 +60,54 @@ def get_plotly_dfs(limit=None, exact_num_fields=None, min_fields=None, max_field
             chunksize=CHUNK_SIZE,
             encoding='utf-8'
         )
-        for chunk_num, chunk in enumerate(raw_df_chunks):
-            chunk = clean_chunk(chunk)  
-            for chart_num, chart_obj in chunk.iterrows():
-                fid = chart_obj.fid 
-                table_data = chart_obj.table_data
-                fields = table_data[list(table_data.keys())[0]]['cols']
-                sorted_fields = sorted(fields.items(), key=lambda x: x[1]['order'])
-                num_fields = len(sorted_fields)
-                uid_map = {
+        status = "processed"
+        try:
 
-                }
-                for src, src_data in table_data.items():
-                    uids = {}
-                    for col_name, col in src_data['cols'].items():
-                        uids[col['uid']] = col_name
-                    uid_map[src] = uids
-                if exact_num_fields:
-                    if num_fields != exact_num_fields: continue
-                if min_fields:
-                    if num_fields < min_fields: continue                    
-                if max_fields:
-                    if num_fields > max_fields: continue
-                if len(sorted_fields) > 100:
-                    continue
-                data_as_dict = OrderedDict()
-                #print(len(sorted_fields))
-                for k, v in sorted_fields:
-                    data_as_dict[k] = pd.Series(v['data'])
+            for chunk_num, chunk in enumerate(raw_df_chunks):
+                chunk = clean_chunk(chunk)
+                for chart_num, chart_obj in chunk.iterrows():
+                    fid = chart_obj.fid
+                    table_data = chart_obj.table_data
+                    fields = table_data[list(table_data.keys())[0]]['cols']
+                    sorted_fields = sorted(fields.items(), key=lambda x: x[1]['order'])
+                    num_fields = len(sorted_fields)
+                    uid_map = {
 
-                dataset_id = fid
-                locator = f
-                df = pd.DataFrame(data_as_dict)
-                result = {
-                    'df': df,
-                    'dataset_id': dataset_id,
-                    'locator': locator,
-                    'chart_data': chart_obj.chart_data,
-                    'uid_map': uid_map,
-                }
-                yield result
+                    }
+                    for src, src_data in table_data.items():
+                        uids = {}
+                        for col_name, col in src_data['cols'].items():
+                            uids[col['uid']] = col_name
+                        uid_map[src] = uids
+                    if exact_num_fields:
+                        if num_fields != exact_num_fields: continue
+                    if min_fields:
+                        if num_fields < min_fields: continue
+                    if max_fields:
+                        if num_fields > max_fields: continue
+                    if len(sorted_fields) > 100:
+                        continue
+                    data_as_dict = OrderedDict()
+                    #print(len(sorted_fields))
+                    for k, v in sorted_fields:
+                        data_as_dict[k] = pd.Series(v['data'])
+
+                    dataset_id = fid
+                    locator = f
+                    df = pd.DataFrame(data_as_dict)
+                    result = {
+                        'df': df,
+                        'dataset_id': dataset_id,
+                        'locator': locator,
+                        'chart_data': chart_obj.chart_data,
+                        'uid_map': uid_map,
+                    }
+                    yield result
+        except Exception as e:
+            status = "error"
+            print("file error")
+        files.insert({"filename": f, 'status':status})
+
 
 
 def get_manyeyes_dfs(exact_num_fields=None, min_fields=None, max_fields=None):
