@@ -25,6 +25,7 @@ from feature_extraction.type_detection import detect_field_type, data_type_to_ge
 
 raw_data_dir = '/media/vidi/Elements/Code/research/vis-data/download/viznet/raw/'
 raw_data_dir = '/media/vidi/Data/raw/splits/'
+#raw_data_dir = '/media/vidi/Data/raw/'
 data_dirs = {
     'plotly': join(raw_data_dir, 'p1'),
     'manyeyes': join(raw_data_dir, 'manyeyes'),
@@ -41,7 +42,7 @@ def get_plotly_dfs(limit=None, exact_num_fields=None, min_fields=None, max_field
     corpus = 'plotly'
     base_dir = data_dirs[corpus]
     files = [f for f in listdir(base_dir) if f.endswith('.tsv') ]
-    print(files)
+    print("files num: ",len(files))
     # files = [tsv_file]
     for f in files[:limit]:
         print(f)
@@ -76,8 +77,10 @@ def get_plotly_dfs(limit=None, exact_num_fields=None, min_fields=None, max_field
                     if num_fields < min_fields: continue                    
                 if max_fields:
                     if num_fields > max_fields: continue
-
+                if len(sorted_fields) > 100:
+                    continue
                 data_as_dict = OrderedDict()
+                #print(len(sorted_fields))
                 for k, v in sorted_fields:
                     data_as_dict[k] = pd.Series(v['data'])
 

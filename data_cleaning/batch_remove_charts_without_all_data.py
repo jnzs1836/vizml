@@ -67,7 +67,12 @@ def remove_charts_without_all_data(data_file_name = '../data/plot_data.tsv', out
                 chart_data = literal_eval(x.chart_data)
                 layout = literal_eval(x.layout)
                 table_data = literal_eval(x.table_data)
-
+                fields = table_data[list(table_data.keys())[0]]['cols'] 
+                if len(fields) > 80:
+                    empty_fields += 1
+                    charts_without_data += 1
+                    chart_loading_errors += 1
+                    continue
                 # Filter empty fields
                 if not (bool(chart_data) and bool(table_data)):
                     empty_fields += 1
@@ -110,9 +115,15 @@ def remove_charts_without_all_data(data_file_name = '../data/plot_data.tsv', out
 
 if __name__ == '__main__':
     base_dir = '/media/vidi/Data/raw/splits/splits/'
-    files = [f for f in os.listdir(base_dir) if f.endswith('.tsv') ]
+    files = [f for f in os.listdir(base_dir) if f.endswith('.tsv') and not f.endswith("header.tsv")]
     print(files)
+    skip_num = 0
     mid_path = '/media/vidi/Data/raw/splits/mid/'
     for file in files:
+        all_fields_output_file_name = file[:-4] + '_with_all_fields_and_header.tsv'
+        if os.path.exists(os.path.join(base_dir, all_fields_output_file_name)):
+            skip_num += 1
+            print("processed: ", skip_num)
+            continue
         print("process ", file)
         remove_charts_without_all_data(os.path.join(base_dir, file), mid_path)

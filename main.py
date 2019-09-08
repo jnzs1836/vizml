@@ -2,6 +2,7 @@ from read_raw_data import get_plotly_dfs
 from pymongo import MongoClient
 import random
 import re
+start =  0
 def get_axis(name):
     return [name + ', x', name + ', y']
 def get_category(table):
@@ -315,22 +316,22 @@ line_count = 0
 count = 0
 types = []
 client = MongoClient()
-db = client['viznet']
+db = client['viznet_data']
 collection = db.data
 plots = db.plots
 # for i, table in enumerate(tables):
 #     print(i)
 vis_types = set()
-start = 5000
-limit = 100000
+#start = 14000
+limit = 5000
 for table in tables:
     try:
-        if count < start:
-            count += 1
-            continue
-        if count > start + limit:
-            print("done: ", count)
-            break
+        #if count < start:
+        #    count += 1
+        #    continue
+        #if count > start + limit:
+        #    print("done: ", count)
+        #    break
         plot, documents, table_types = process_chart(table)
         # collection.insert_many(tables)
         if not table_types:
